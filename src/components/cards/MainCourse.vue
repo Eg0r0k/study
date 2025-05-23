@@ -1,0 +1,40 @@
+<template>
+    <div class="h-full relative bg-card border rounded-lg overflow-hidden flex">
+        <div class="flex flex-col py-8 px-4  justify-between gap-5 sm:w-1/2">
+            <div>
+                <h3 class="text-2xl font-semibold mb-3">
+                    Продуктовый менеджмент
+                </h3>
+                <p class="text-sm">
+                    Для специалистов, которые хотят овладеть актуальными компетенциями для управления
+                    продуктовым портфелем, создания и продвижения продукта
+                </p>
+            </div>
+            <div class="mt-6">
+                <hr class="border-t border-gray-300 mb-2" />
+                <div class="flex justify-between w-full">
+                    <time>
+                        Доступен до 31.12.2025
+                    </time>
+                    <span class="ml-2">
+                        Уроков: 7/20
+                    </span>
+                </div>
+            </div>
+            <Button size="lg" class="font-semibold sm:self-start">
+                Продолжить курс
+            </Button>
+        </div>
+        <div class=" absolute top-4 right-4 py-3 px-7 bg-card border rounded-[22px] text-sm font-semibold  ">
+            Extra
+        </div>
+        <div class="hidden sm:block sm:w-1/2 h-full bg-no-repeat bg-center bg-cover"
+            style="background-image: url('/img/Card-1.png');"></div>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { Button } from '../ui/button';
+</script>
+
+<style scoped></style>
