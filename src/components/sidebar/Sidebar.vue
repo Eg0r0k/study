@@ -16,12 +16,13 @@
                 <Skeleton class="h-4 w-[80%]" />
             </div>
         </div>
-        <ScrollArea class="flex flex-1 flex-col gap-2 overflow-x-hidden min-h-0 ">
-            <SidebarNav :label="$t('sidebar.navigation')" :links="USER_LINKS" />
-            <SidebarNav :label="$t('sidebar.control')" :links="ADMIN_LINKS" />
+        <ScrollArea class="flex flex-1 flex-col gap-2 overflow-x-hidden min-h-0  ">
+            <SidebarNav :links="USER_LINKS" />
         </ScrollArea>
 
         <div class="flex flex-col gap-2 p-2">
+            <SidebarNav :label="'Admin'" :links="ADMIN_LINKS" />
+
         </div>
     </aside>
     <div v-if="appStore.isSidebarOpen && appStore.isMobile" class="sidebar-overlay" @click="appStore.closeSidebar" />
@@ -30,7 +31,7 @@
 <script setup lang="ts">
 import SidebarUserMenu from './SidebarUserMenu.vue';
 import SidebarNav from './SidebarNav.vue';
-import { HouseIcon, type LucideIcon, BookIcon, SettingsIcon, PanelLeft, Briefcase, ShieldIcon, UserIcon } from 'lucide-vue-next';
+import { HouseIcon, type LucideIcon, BookIcon, SettingsIcon, PanelLeft, Briefcase, ShieldIcon, UserIcon, ChartColumn, PanelsTopLeft, Calendar, NotepadText } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
 import { onClickOutside, useEventListener } from '@vueuse/core';
 import { useAppStore } from '@/stores/appStore';
@@ -61,13 +62,14 @@ useEventListener('keydown', (e) => {
 
 const USER_LINKS: Links[] = [
     { label: 'sidebar.home', url: '/', icon: HouseIcon },
-    { label: 'sidebar.projects', url: '/projects', icon: Briefcase },
-    { label: 'sidebar.theory', url: '/theory', icon: BookIcon },
+    { label: 'Каталог курсов', url: '/projects', icon: BookIcon },
+    { label: 'Мероприятия', url: '/events', icon: Calendar },
     { label: 'sidebar.settings', url: '/settings', icon: SettingsIcon },
+    { label: 'Карьера', url: '/settings', icon: NotepadText },
 ];
 const ADMIN_LINKS: Links[] = [
-    { label: 'sidebar.dashboard', url: '/dashboard', icon: ShieldIcon },
-    { label: 'sidebar.userManagement', url: '/users', icon: UserIcon },
+    { label: 'Панель управления', url: '/dashboard', icon: PanelsTopLeft },
+    { label: 'Аналитика данных', url: '/users', icon: ChartColumn },
 ];
 
 </script>

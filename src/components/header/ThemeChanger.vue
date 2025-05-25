@@ -1,7 +1,7 @@
 <template>
     <DropdownMenu>
         <DropdownMenuTrigger as-child>
-            <Button class="h-8 w-8 p-0">
+            <Button variant="outline" class="size-8 bg-card p-0">
                 <component :is="themeIcons[appStore.mode]" class="size-4" />
             </Button>
         </DropdownMenuTrigger>

@@ -1,26 +1,27 @@
 <template>
-    <div class="achievement-card-wrapper w-[272px] h-[324px]">
+    <div class="achievement-card-wrapper w-full  h-[324px]">
         <div class="achievement-card">
             <!-- Front side -->
-            <div class="achievement-front">
+            <div class="achievement-front  rounded-lg">
                 <div class="relative flex items-center justify-center mb-6">
                     <div class="bg-muted/50 rounded-full size-[120px] flex items-center justify-center">
                         <img :src="icon" :alt="name" class="size-16" />
                     </div>
-                    <div class="absolute -bottom-3 text-nowrap bg-background border rounded-full px-3 py-0.5 text-sm font-medium">
+                    <div
+                        class="absolute -bottom-3 text-nowrap bg-background border rounded-full px-3 py-0.5 text-sm font-medium">
                         {{ subtitle }}
                     </div>
                 </div>
 
                 <h3 class="font-semibold text-lg mb-6">{{ name }}</h3>
-                
+
                 <div class="text-sm text-muted-foreground mt-2.5">
                     {{ level }} level
                 </div>
             </div>
 
             <!-- Back side -->
-            <div class="achievement-back bg-accent p-6 flex flex-col h-full">
+            <div class="achievement-back bg-accent p-6 flex flex-col h-full rounded-lg">
                 <h3 class="font-semibold text-lg mb-6">{{ name }}</h3>
                 <p class="text-sm text-muted-foreground mb-auto">
                     {{ description }}
@@ -76,7 +77,6 @@ const formatDate = (date: string) => {
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
-    border-radius: 0.5rem;
     border: 1px solid var(--border);
 }
 

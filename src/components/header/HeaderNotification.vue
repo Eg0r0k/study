@@ -1,7 +1,7 @@
 <template>
     <Popover>
         <PopoverTrigger as-child>
-            <Button class="relative h-8 w-8 p-0">
+            <Button variant="outline" class="relative bg-card h-8 w-8 p-0">
                 <BellIcon class="size-4" />
                 <span v-if="hasUnread"
                     class="absolute -right-0.5 -top-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-destructive ring-2 ring-background" />

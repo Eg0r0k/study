@@ -1,6 +1,6 @@
 <template>
     <section class="px-4">
-        <div class="flex mb-3.5 items-center justify-between ">
+        <div class="flex mb-3.5 items-center justify-between flex-wrap gap-3 ">
             <div>
                 <h1 class="text-2xl font-semibold mb-0">
                     {{ pageTitle }}
@@ -10,11 +10,11 @@
                 </p>
             </div>
             <div class="flex items-center gap-3">
-                <RouterLink to="/database" class="flex items-center text-sm py-1 px-2 rounded-4xl"
+                <RouterLink to="/database" class="flex items-center text-sm py-1 px-2 rounded-4xl font-medium"
                     :class="{ ' bg-accent': $route.path === '/database' }">
                     База знаний
                 </RouterLink>
-                <RouterLink to="/achievements" class="flex items-center text-sm py-1 px-2 rounded-4xl"
+                <RouterLink to="/achievements" class="flex items-center text-sm py-1 px-2 rounded-4xl font-medium"
                     :class="{ 'bg-accent': $route.path === '/achievements' }">
                     Достижения
                 </RouterLink>
@@ -30,11 +30,30 @@
                     <MainCourse />
                 </div>
                 <div class="div3">
-                    <Card class="h-full">
-                        <CardHeader>
-                            <CardTitle>Статистика</CardTitle>
-                            <CardDescription>Уровень успеваемости за последние 30 дней</CardDescription>
+                    <Card class="h-full ">
+                        <CardHeader class="flex justify-between items-center">
+
+                            <div>
+                                <CardTitle class="text-2xl font-semibold ">Статистика</CardTitle>
+                                <CardDescription>Уровень успеваемости за последние 30 дней</CardDescription>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <Button variant="outline" class=" bg-transparent"
+                                    :class="{ 'bg-accent': chartPeriod === 'quarter' }"
+                                    @click="chartPeriod = 'quarter'">
+                                    За 3 месяца
+                                </Button>
+                                <Button variant="outline" class=" bg-transparent"
+                                    :class="{ 'bg-accent': chartPeriod === 'month' }" @click="chartPeriod = 'month'">
+                                    За 30 дней
+                                </Button>
+                            </div>
                         </CardHeader>
+                        <CardContent class="h-full ">
+                            <div class="w-full h-[300px]">
+                                <AreaChart :period="chartPeriod" />
+                            </div>
+                        </CardContent>
                     </Card>
                 </div>
                 <div class="div4 flex flex-col gap-3.5">
@@ -55,13 +74,14 @@
                 </div>
             </template>
 
-            <!-- Content for Achievements -->
             <template v-else>
-                <div class="achievements-grid">
-                    <AchievementCard name="Real programmer" subtitle="Strong Middle" level="4/5"
-                        icon="/achievements/programmer.svg"
-                        description="Достигните высокого уровня мастерства в программировании, освоив продвинутые техники и паттерны разработки"
-                        date="2024-02-15" />
+                <div class="achievements-wrapper">
+                    <div class="achievements-grid">
+                        <AchievementCard v-for="i in 10" :key="i" name="Real programmer" subtitle="Strong Middle"
+                            level="4/5" icon="/achievements/programmer.svg"
+                            description="Достигните высокого уровня мастерства в программировании, освоив продвинутые техники и паттерны разработки"
+                            date="2024-02-15" />
+                    </div>
                 </div>
             </template>
         </div>
@@ -69,12 +89,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import MainCourse from '@/components/cards/MainCourse.vue';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import CardContent from '@/components/ui/card/CardContent.vue';
+import { Card, CardDescription, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import AchievementCard from '@/components/achievements/AchievementCard.vue';
+import { Button } from '@/components/ui/button';
+import AreaChart from '@/components/charts/AreaChart.vue';
 
 const route = useRoute();
 
@@ -90,6 +111,8 @@ const pageDescription = computed(() =>
         ? 'Собрали все ваши достижения в одном месте: отслеживайте прогресс и учитесь когда удобно'
         : 'Изучайте материалы и развивайтесь вместе с нами'
 );
+
+const chartPeriod = ref<'month' | 'quarter'>('month');
 </script>
 
 <style scoped>
@@ -98,7 +121,20 @@ const pageDescription = computed(() =>
     gap: 14px;
 }
 
+.div1,
+.div2 {
+    height: 371px;
+    min-height: 371px;
+}
+
 @media (max-width: 768px) {
+
+    .div1,
+    .div2 {
+        height: auto;
+        min-height: 0;
+    }
+
     .main {
         grid-template-columns: 1fr;
     }
@@ -138,7 +174,6 @@ const pageDescription = computed(() =>
 @media (min-width: 1025px) {
     .main {
         grid-template-columns: repeat(4, 1fr);
-        grid-template-rows: repeat(2, 1fr);
     }
 
     .div1 {
@@ -158,10 +193,38 @@ const pageDescription = computed(() =>
     }
 }
 
+.achievements-wrapper {
+    grid-column: 1 / -1;
+}
+
 .achievements-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 1400px) {
+    .achievements-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1200px) {
+    .achievements-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .achievements-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .achievements-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .achievement-card {

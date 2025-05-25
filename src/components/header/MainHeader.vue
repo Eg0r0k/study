@@ -13,11 +13,16 @@
                 </div>
 
                 <div class="flex h-5 items-center space-x-4 text-sm">
+
+                    <div>
+                        <span class=" font-bold text-muted-foreground/70 text-sm mr-3.5">420xp</span>
+                        <span>Level 8</span>
+                    </div>
                     <Separator orientation="vertical" />
                     <ThemeChanger />
                     <HeaderNotification />
                     <Separator orientation="vertical" />
-                    <Button>
+                    <Button @click="authStore.logout">
                         Выйти
                     </Button>
                 </div>
@@ -35,10 +40,13 @@ import { useAppStore } from '@/stores/appStore';
 import { Separator } from '@/components/ui/separator'
 import HeaderNotification from '@/components/header/HeaderNotification.vue';
 import ThemeChanger from '@/components/header/ThemeChanger.vue';
+import { useAuthStore } from '@/stores/authStore';
 
 const appStore = useAppStore();
 const route = useRoute();
 const showHeader = computed(() => route.meta.showHeader ?? true);
+const authStore = useAuthStore()
+
 </script>
 
 <style scoped>

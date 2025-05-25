@@ -9,6 +9,8 @@ import GuestLayout from "@/layouts/GuestLayout.vue";
 import { authMiddleware } from "@/middleware/authMiddleware";
 import { titleMiddleware } from "@/middleware/titleMiddleware";
 import { roleMiddleware } from "@/middleware/roleMiddleware";
+import EventsPage from "@/pages/EventsPage.vue";
+import EventDetailsPage from "@/pages/events/[id].vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -25,6 +27,18 @@ const routes: RouteRecordRaw[] = [
         name: "database",
         meta: { title: "pages.database.title" },
         component: HomePage,
+      },
+      {
+        path: "/events",
+        name: "events",
+        meta: { title: "Мероприятия" },
+        component: EventsPage,
+      },
+      {
+        path: "/events/:id",
+        name: "event-details",
+        meta: { title: "Детали мероприятия" },
+        component: EventDetailsPage,
       },
       {
         path: "/achievements",

@@ -2,17 +2,16 @@
     <DropdownMenu>
         <DropdownMenuTrigger as-child>
             <Button variant="ghost" class="w-full h-auto p-2">
-                <Avatar class="h-8 w-8">
+                <Avatar class="  size-[52px] ">
                     <AvatarImage src="/" :alt="user.username" />
                     <AvatarFallback class="dark:bg-muted font-bold bg-primary !text-white">
                         {{ userInitials }}
                     </AvatarFallback>
                 </Avatar>
                 <div class="grid flex-1 text-left text-sm leading-tight">
-                    <span class="truncate font-semibold">{{ user.username }}</span>
-                    <span class="truncate text-xs">{{ user.username }}</span>
+                    <span class="truncate font-semibold text-lg">{{ user.username }}</span>
+                    <span class="truncate text-xs font-medium  text-muted-foreground/70 ">{{ user.username }}</span>
                 </div>
-                <ChevronsUpDown class="ml-auto size-4" />
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent class="w-[--reka-dropdown-menu-trigger-width] min-w-[230px] rounded-lg" side="bottom"
@@ -31,11 +30,7 @@
                             <span class="truncate text-xs">{{ user.username }}</span>
                         </div>
                     </div>
-                    <!-- <div>
-                        <span class="text-xs">Уровень: {{ user.level }}</span>
-                        <Progress :model-value="progressPercentage" class="mt-1 h-1" />
-                        <span class="text-xs">XP: {{ user.xp }} / {{ user.nextLevelXp }}</span>
-                    </div> -->
+
                 </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
