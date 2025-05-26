@@ -48,6 +48,6 @@ export interface AchievementsResponse {
     level: number;
     experience: number;
   };
-  unlocked_achievements: Achievement[];
+  unlocked_achievements: UnlockedAchievement[];
   locked_achievements: Achievement[];
 }
