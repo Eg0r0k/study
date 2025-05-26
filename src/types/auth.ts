@@ -4,6 +4,7 @@ export interface Achievement {
   id: string;
   name: string;
   code: string;
+  description: string;
   experience_reward: number;
 }
 

@@ -81,12 +81,10 @@
                             :key="achivement.achievement.id" :name="achivement.achievement.name"
                             subtitle="Strong Middle" :level="achivement.level"
                             :icon="`/achievements/${achivement.achievement.code}.png`"
-                            description="Достигните высокого уровня мастерства в программировании, освоив продвинутые техники и паттерны разработки"
-                            :date="achivement.date_earned" />
+                            :description="achivement.achievement.description" :date="achivement.date_earned" />
                         <AchievementCard class="grayscale-100" v-for="achivement in authStore.user?.locked_achievements"
                             :key="achivement.id" :name="achivement.name" subtitle="Strong Middle"
-                            :icon="`/achievements/${achivement.code}.png`"
-                            description="Достигните высокого уровня мастерства в программировании, освоив продвинутые техники и паттерны разработки" />
+                            :icon="`/achievements/${achivement.code}.png`" :description="achivement.description" />
                     </div>
                 </div>
             </template>
