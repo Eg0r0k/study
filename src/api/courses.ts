@@ -1,103 +1,65 @@
+import apiClient from "@/lib/axios";
 import type { Course } from "@/types/course";
 
-const mockCourses: Course[] = [
-  {
-    id: 1,
-    title: "Основы машинного обучения",
-    description:
-      "Изучите основы ML, включая классические алгоритмы и современные подходы.",
-    category: "ai",
-    experienceLevel: "Без опыта",
-    image: "/img/Card-1.png",
-    duration: 48,
-    totalLessons: 24,
-    completedLessons: 0,
-    requirements: ["Базовые знания Python", "Основы математики"],
-    whatYouWillLearn: [
-      "Основные алгоритмы ML",
-      "Работа с данными",
-      "Построение моделей",
-    ],
-  },
-  {
-    id: 2,
-    title: "Разработка Web-приложений на React",
-    description:
-      "Создавайте современные веб-приложения с использованием React, Redux и современных инструментов разработки.",
-    category: "dev",
-    experienceLevel: "С опытом",
-    image: "/img/Card-2.png",
-    duration: 56,
-    totalLessons: 32,
-    completedLessons: 0,
-    requirements: ["JavaScript", "HTML/CSS", "Базовые знания веб-разработки"],
-    whatYouWillLearn: [
-      "React и его экосистема",
-      "Управление состоянием",
-      "Оптимизация производительности",
-    ],
-  },
-  {
-    id: 3,
-    title: "Современные технологии DevOps",
-    description:
-      "Погрузитесь в мир DevOps: контейнеризация, CI/CD, облачные сервисы и автоматизация.",
-    category: "tech",
-    experienceLevel: "С опытом",
-    image: "/img/Card-1.png",
-    duration: 42,
-    totalLessons: 28,
-    completedLessons: 0,
-    requirements: ["Linux", "Базовые знания сетей", "Git"],
-    whatYouWillLearn: [
-      "Docker и Kubernetes",
-      "CI/CD пайплайны",
-      "Мониторинг и логирование",
-    ],
-  },
-  {
-    id: 4,
-    title: "Управление IT-проектами",
-    description:
-      "Освойте ключевые навыки управления IT-проектами, от планирования до успешного запуска.",
-    category: "business",
-    experienceLevel: "Без опыта",
-    image: "/img/Card-2.png",
-    duration: 36,
-    totalLessons: 20,
-    completedLessons: 0,
-    requirements: ["Базовые знания IT", "Английский язык"],
-    whatYouWillLearn: [
-      "Agile методологии",
-      "Управление командой",
-      "Оценка рисков",
-    ],
-  },
-  {
-    id: 5,
-    title: "Нейронные сети и Deep Learning",
-    description:
-      "Изучите глубокое обучение, архитектуры нейронных сетей и их применение в реальных проектах.",
-    category: "ai",
-    experienceLevel: "С опытом",
-    image: "/img/Card-1.png",
-    duration: 64,
-    totalLessons: 40,
-    completedLessons: 0,
-    requirements: ["Python", "Математическая статистика", "ML основы"],
-    whatYouWillLearn: [
-      "CNN и RNN архитектуры",
-      "Transfer Learning",
-      "Развертывание моделей",
-    ],
-  },
-  // Добавьте больше курсов...
-];
 
-export const fetchCourses = (): Promise<Course[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockCourses);
-    }, 1000);
-  });
+
+interface CourseData {
+  id: string;
+  title: string;
+  description : string;
+  category: string;
+  experience_level: "Без опыта" | "С опытом";
+  image: string;
+  duration: number;
+  total_lessons: number;
+  created_date: string;
+}
+
+interface CourseInRequest {
+  requirements: string[];
+  learn_points: string[];
+  course: CourseData
+}
+
+interface CourseRequest {
+  courses: CourseInRequest[]
+}
+
+interface UserCourseData {
+  user_id: string;
+  course_id: string;
+  completed_lessons: number;
+}
+
+interface UserCourseRequest {
+  data: UserCourseData[];
+}
+
+export const fetchCourses = async (): Promise<Course[]> => {
+  const [coursesRes, userCoursesRes] = await Promise.all([
+    apiClient.get<CourseRequest>("/api/courses"),
+    apiClient.get<UserCourseRequest>("/api/courses/user")
+  ]);
+
+  const userProgressMap = new Map<string, number>();
+  for (const entry of userCoursesRes.data.data) {
+    userProgressMap.set(entry.course_id, entry.completed_lessons);
+  }
+
+  const courses: Course[] = coursesRes.data.courses.map(({ course, requirements, learn_points }) => ({
+    id: course.id,
+    title: course.title,
+    description: course.description,
+    category: course.category,
+    experience_level: course.experience_level,
+    image: course.image,
+    duration: course.duration,
+    total_lessons: course.total_lessons,
+    completed_lessons: userProgressMap.get(course.id) ?? 0,
+    requirements,
+    whatYouWillLearn: learn_points,
+    is_participant: userProgressMap.has(course.id)
+  }));
+
+  return courses;
 };

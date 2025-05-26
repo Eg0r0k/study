@@ -6,26 +6,10 @@ type PermissionKey = "read" | "write" | "delete" | "update";
 
 type PermissionsMap = Record<Roles, PermissionKey[]>;
 
-const permissionsMap: PermissionsMap = {
-  admin: ["read", "write", "delete", "update"],
-  user: ["read", "write"],
-};
-
 export const usePermissions = () => {
   const { user } = useAuthStore();
 
-  const userPermissions: ComputedRef<PermissionKey[]> = computed(() => {
-    if (!user) {
-      return [];
-    }
-    return permissionsMap[user.role];
-  });
-  const can = (action: PermissionKey): boolean => {
-    return userPermissions.value.includes(action);
-  };
-  const canAll = (actions: PermissionKey[]): boolean => {
-    return actions.every((a) => can(a));
-  };
+
   const hasRole = (role: Roles): boolean => {
     return user?.role === role;
   };
@@ -33,14 +17,11 @@ export const usePermissions = () => {
     if (!user) {
       return false;
     }
-    return roles.includes(user.role);
+    return roles.includes(user.role as Roles);
   };
 
   return {
     hasRole,
     hasAnyRole,
-    can,
-    canAll,
-    userPermissions,
   };
 };

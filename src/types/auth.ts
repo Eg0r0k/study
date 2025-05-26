@@ -1,4 +1,4 @@
-export type Roles = "admin" | "user";
+export type Roles = "Administrator" | "User";
 
 export interface Achievement {
   id: string;
