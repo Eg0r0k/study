@@ -10,11 +10,13 @@
                 </p>
             </div>
             <div class="flex items-center gap-3">
-                <RouterLink to="/database" class="flex items-center text-sm py-1 px-2 rounded-4xl font-medium"
+                <RouterLink to="/database"
+                    class="flex items-center text-sm py-1 px-2 rounded-4xl font-medium"
                     :class="{ ' bg-accent': $route.path === '/database' }">
                     База знаний
                 </RouterLink>
-                <RouterLink to="/achievements" class="flex items-center text-sm py-1 px-2 rounded-4xl font-medium"
+                <RouterLink to="/achievements"
+                    class="flex items-center text-sm py-1 px-2 rounded-4xl font-medium"
                     :class="{ 'bg-accent': $route.path === '/achievements' }">
                     Достижения
                 </RouterLink>
@@ -27,7 +29,7 @@
                     <MainCourse />
                 </div>
                 <div class="div2">
-                    <MainCourse />
+                    <SecondCourse />
                 </div>
                 <div class="div3">
                     <Card class="h-full ">
@@ -38,13 +40,16 @@
                                 <CardDescription>Уровень успеваемости за последние 30 дней</CardDescription>
                             </div>
                             <div class="flex items-center gap-3">
-                                <Button variant="outline" class=" bg-transparent"
+                                <Button variant="outline"
+                                    class=" bg-transparent"
                                     :class="{ 'bg-accent': chartPeriod === 'quarter' }"
                                     @click="chartPeriod = 'quarter'">
                                     За 3 месяца
                                 </Button>
-                                <Button variant="outline" class=" bg-transparent"
-                                    :class="{ 'bg-accent': chartPeriod === 'month' }" @click="chartPeriod = 'month'">
+                                <Button variant="outline"
+                                    class=" bg-transparent"
+                                    :class="{ 'bg-accent': chartPeriod === 'month' }"
+                                    @click="chartPeriod = 'month'">
                                     За 30 дней
                                 </Button>
                             </div>
@@ -58,11 +63,25 @@
                 </div>
                 <div class="div4 flex flex-col gap-3.5">
                     <p class="mb-1 font-semibold">Доступные проекты</p>
-                    <Card v-for="i in 2" :key="i" class="!gap-[20px]">
+                    <Card class="!gap-[20px]">
                         <CardHeader>
                             <CardTitle>BSA08_BPMN</CardTitle>
                             <CardDescription>В этом проекте вы научитесь моделированию бизнес процессов с использованием
                                 нотации BPMN 2.0, включая построение диаграмм процессов и событий</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div class="flex items-center gap-2">
+                                <div class=" size-[12px] rounded-full bg-[#f73083]"></div>
+                                BSA
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card class="!gap-[20px]">
+                        <CardHeader>
+                            <CardTitle>BSA09_SQL</CardTitle>
+                            <CardDescription>В этом проекте вы изучите основы работы с базами данных с использованием
+                                языка SQL, включая написание запросов, фильтрацию, агрегирование данных и работу с
+                                несколькими таблицами</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div class="flex items-center gap-2">
@@ -78,13 +97,20 @@
                 <div class="achievements-wrapper">
                     <div class="achievements-grid">
                         <AchievementCard v-for="achivement in authStore.user?.unlocked_achievements"
-                            :key="achivement.achievement.id" :name="achivement.achievement.name"
-                            subtitle="Strong Middle" :level="achivement.level"
+                            :key="achivement.achievement.id"
+                            :name="achivement.achievement.name"
+                            subtitle="Strong Middle"
+                            :level="achivement.level"
                             :icon="`/achievements/${achivement.achievement.code}.png`"
-                            :description="achivement.achievement.description" :date="achivement.date_earned" />
-                        <AchievementCard class="grayscale-100" v-for="achivement in authStore.user?.locked_achievements"
-                            :key="achivement.id" :name="achivement.name" subtitle="Strong Middle"
-                            :icon="`/achievements/${achivement.code}.png`" :description="achivement.description" />
+                            :description="achivement.achievement.description"
+                            :date="achivement.date_earned" />
+                        <AchievementCard class="grayscale-100"
+                            v-for="achivement in authStore.user?.locked_achievements"
+                            :key="achivement.id"
+                            :name="achivement.name"
+                            subtitle="Strong Middle"
+                            :icon="`/achievements/${achivement.code}.png`"
+                            :description="achivement.description" />
                     </div>
                 </div>
             </template>
@@ -101,6 +127,7 @@ import AchievementCard from '@/components/achievements/AchievementCard.vue';
 import { Button } from '@/components/ui/button';
 import AreaChart from '@/components/charts/AreaChart.vue';
 import { useAuthStore } from '@/stores/authStore';
+import SecondCourse from '@/components/cards/SecondCourse.vue';
 
 const route = useRoute();
 const authStore = useAuthStore()
