@@ -20,7 +20,7 @@
             <SidebarNav :links="USER_LINKS" />
         </ScrollArea>
 
-        <div class="flex flex-col gap-2 p-2">
+        <div class="flex flex-col gap-2 p-2" v-if="usePermissions().hasRole('Administrator')">
             <SidebarNav :label="'Admin'" :links="ADMIN_LINKS" />
 
         </div>
@@ -39,6 +39,7 @@ import { ref } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import { Skeleton } from '@/components/ui/skeleton';
 import ScrollArea from '../ui/scroll-area/ScrollArea.vue';
+import { usePermissions } from '@/composables/usePermissions';
 export interface Links {
     label: string;
     url: string;

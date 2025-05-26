@@ -1,13 +1,14 @@
 export interface Course {
-  id: number;
+  id: string;
   title: string;
   description: string;
   category: string;
-  experienceLevel: "Без опыта" | "С опытом";
+  experience_level: "Без опыта" | "С опытом";
   image: string;
   duration: number;
-  totalLessons: number;
-  completedLessons: number;
+  total_lessons: number;
+  completed_lessons: number;
   requirements: string[];
   whatYouWillLearn: string[];
+  is_participant: boolean;
 }
