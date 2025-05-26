@@ -25,7 +25,7 @@
                         О курсе
                     </Button>
                     <Button class="flex-1" v-if="!course.is_participant" @click.stop="joinCourse(course)">Поступить</Button>
-                    <Button class="flex-1" v-else disabled>Уже участвуем</Button>
+                    <Button class="flex-1" v-else disabled>Заявка подана</Button>
                 </div>
             </div>
         </div>
