@@ -10,19 +10,33 @@ export const useAuthStore = defineStore("auth", () => {
   const error = ref<string | null>(null);
   const authChecked = ref(false);
   const redirectPath = ref<string | null>(null);
-  const isAuthenticated = computed(() => {
-    return !!user.value;
-  });
+
+  const isAuthenticated = computed(() => !!user.value);
+
+  const setUserData = async () => {
+    const [authData, achievementsData] = await Promise.all([
+      AuthService.checkAuth(),
+      AuthService.getAchievements(),
+    ]);
+
+    user.value = {
+      user_id: achievementsData.user.user_id,
+      level: achievementsData.user.level,
+      experience: achievementsData.user.experience,
+      username: authData.username,
+      role: authData.role,
+      permissions: authData.permissions,
+      unlocked_achievements: achievementsData.unlocked_achievements,
+      locked_achievements: achievementsData.locked_achievements,
+    };
+  };
 
   async function initializeAuth() {
     if (authChecked.value) return;
 
     try {
       loading.value = true;
-      const refreshResponse = await refreshTokens();
-      if (refreshResponse?.message === "Token refreshed") {
-        await loadProfile();
-      }
+      await setUserData();
     } catch (e) {
       console.error("Init auth error:", e);
       user.value = null;
@@ -33,27 +47,13 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  async function loadProfile() {
-    try {
-      const response = await AuthService.getProfile();
-      if (response?.data) {
-        user.value = response.data;
-        console.log("User profile loaded:", user.value);
-      }
-    } catch (e) {
-      console.error("Load profile error:", e);
-      user.value = null;
-      error.value = e instanceof Error ? e.message : "Failed to load profile";
-      throw e;
-    }
-  }
-
   async function login(credentials: LoginCredentials) {
     try {
       loading.value = true;
       error.value = null;
       await AuthService.login(credentials);
-      await loadProfile();
+      await setUserData();
+
       router.push(redirectPath.value || "/");
       redirectPath.value = null;
     } catch (e) {
@@ -74,7 +74,8 @@ export const useAuthStore = defineStore("auth", () => {
       loading.value = true;
       error.value = null;
       await AuthService.register(credentials);
-      await loadProfile();
+       
+      await setUserData();
       router.push("/");
     } catch (e) {
       const message = e instanceof Error ? e.message : "Неизвестная ошибка";
@@ -97,16 +98,23 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  async function refreshTokens() {
-    try {
-      const response = await AuthService.refresh();
-      return response;
-    } catch (e) {
-      console.error("Refresh tokens error:", e);
-      user.value = null;
-      throw e;
+  const userInitials = computed(() => {
+    if (!user.value?.username) {
+      return "U";
     }
-  }
+    const username = user.value.username.trim();
+    if (!username) {
+      return "U";
+    }
+    const names = username.split(/\s+/);
+    let initials = "";
+    if (names.length >= 2) {
+      initials = names[0][0] + names[names.length - 1][0];
+    } else {
+      initials = names[0].slice(0, 2);
+    }
+    return initials.toUpperCase().padEnd(2, "").slice(0, 2);
+  });
 
   return {
     user,
@@ -117,10 +125,9 @@ export const useAuthStore = defineStore("auth", () => {
     register,
     login,
     logout,
-    refreshTokens,
-    loadProfile,
     initializeAuth,
     setRedirectPath,
     redirectPath: computed(() => redirectPath.value),
+    userInitials,
   };
 });

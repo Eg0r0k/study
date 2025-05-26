@@ -15,8 +15,10 @@
                 <div class="flex h-5 items-center space-x-4 text-sm">
 
                     <div>
-                        <span class=" font-bold text-muted-foreground/70 text-sm mr-3.5">420xp</span>
-                        <span>Level 8</span>
+                        <span class=" font-bold text-muted-foreground/70 text-sm mr-3.5">
+                            {{ authStore.user?.experience }} xp
+                        </span>
+                        <span>Level {{ authStore.user?.level }}</span>
                     </div>
                     <Separator orientation="vertical" />
                     <ThemeChanger />

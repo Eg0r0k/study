@@ -1,13 +1,12 @@
 <template>
     <section class="w-full flex flex-col items-center pt-24 bg-background px-4">
         <div class="w-full max-w-[400px] flex flex-col items-center space-y-4">
-            <LottieAnimation src="/TwoFactorSetupMonkeyIdle.tgs" :width="165" :height="165" renderer="svg" repeat />
-
+            <img width="165" height="165" class=" max-w-full h-auto" src="/img/Logo.svg" />
             <div class="text-center  space-y-2 mb-6">
                 <h1 class="text-2xl font-bold">{{ $t('auth.login.title') }}</h1>
                 <p class="text-sm text-muted-foreground">{{ $t('auth.login.subtitle') }}</p>
             </div>
-            <div class="flex flex-col w-full gap-4">
+            <!-- <div class="flex flex-col w-full gap-4">
                 <Button size="lg" variant="outline">
                     <Icon icon="mingcute:google-fill" />
                     {{ $t('auth.login.googleLogin') }}
@@ -19,16 +18,16 @@
                         {{ $t('auth.login.or') }}
                     </span>
                 </div>
-            </div>
+            </div> -->
 
-            <form @submit="onSubmit" class="w-full space-y-6">
+            <form @submit="onSubmit" class="w-full space-y-4">
                 <FormField v-slot="{ componentField }" name="username" :validate-on-blur="!isFieldDirty">
                     <FormItem class=" relative ">
-                        <FormLabel class="absolute px-1 text-sm -top-3 left-2 bg-background">
+                        <FormLabel class=" px-1 text-sm  bg-background">
                             {{ $t('auth.login.form.username') }}
                         </FormLabel>
                         <FormControl>
-                            <Input autocomplete="username" class="h-10 !bg-transparent" v-bind="componentField"
+                            <Input autocomplete="username" class="h-10 !bg-card" v-bind="componentField"
                                 :placeholder="$t('auth.login.form.username')" />
                         </FormControl>
                         <FormMessage class="text-xs text-destructive" />
@@ -37,12 +36,12 @@
 
                 <FormField v-slot="{ componentField }" name="password" :validate-on-blur="!isFieldDirty">
                     <FormItem class="relative">
-                        <FormLabel class="absolute px-1 text-sm -top-3 left-2 bg-background z-[1]">
+                        <FormLabel class=" px-1 text-sm bg-background z-[1]">
                             {{ $t('auth.login.form.password') }}
                         </FormLabel>
                         <div class="relative">
                             <FormControl>
-                                <Input autocomplete="current-password" class="h-10 !bg-transparent pr-10"
+                                <Input autocomplete="current-password" class="h-10 !bg-card pr-10"
                                     v-bind="componentField" :type="showPassword ? 'text' : 'password'"
                                     :placeholder="$t('auth.login.form.password')" />
                             </FormControl>

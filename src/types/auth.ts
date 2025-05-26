@@ -1,21 +1,27 @@
 export type Roles = "admin" | "user";
 
 export interface Achievement {
-  id: number;
+  id: string;
   name: string;
-  description: string;
-  unlocked: boolean;
-  icon: string;
+  code: string;
+  experience_reward: number;
+}
+
+interface UnlockedAchievement {
+  level: string;
+  date_earned: string;
+  achievement: Achievement;
 }
 
 export interface User {
-  id: string;
-  username: string;
-  role: Roles;
+  user_id: string;
   level: number;
-  achievements: Achievement[];
-  certificatesCount: number;
-  unlockedAchievementsCount: number;
+  experience: number;
+  username: string;
+  role: string;
+  permissions: string[];
+  unlocked_achievements: UnlockedAchievement[];
+  locked_achievements: Achievement[];
 }
 
 export interface LoginCredentials {
@@ -26,5 +32,21 @@ export interface LoginCredentials {
 export interface RegisterCredentials {
   username: string;
   password: string;
-  repeatPassword: string;
+  repeat_password: string;
+}
+
+export interface AuthResponse {
+  username: string;
+  role: string;
+  permissions: string[];
+}
+
+export interface AchievementsResponse {
+  user: {
+    user_id: string;
+    level: number;
+    experience: number;
+  };
+  unlocked_achievements: Achievement[];
+  locked_achievements: Achievement[];
 }

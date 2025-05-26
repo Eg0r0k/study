@@ -55,8 +55,19 @@ const routes: RouteRecordRaw[] = [
       {
         path: "/dashboard",
         name: "dashboard",
-        meta: { title: "pages.dashboard.title", roles: ["admin"] },
+        meta: {
+          title: "pages.dashboard.title",
+          //roles: ["admin"],
+        },
         component: () => import("@/pages/DashboardPage.vue"),
+      },
+      {
+        path: "/users",
+        name: "users",
+        meta: {
+          title: "pages.users.title",
+        },
+        component: () => import("@/pages/UsersPage.vue"),
       },
       {
         path: "/profile",
@@ -69,6 +80,15 @@ const routes: RouteRecordRaw[] = [
         name: "settings",
         meta: { title: "pages.settings.title" },
         component: SettingsPage,
+      },
+      {
+        path: "/chat",
+        name: "chat",
+        meta: {
+          title: "Чаты",
+          requiresAuth: true,
+        },
+        component: () => import("@/pages/ChatPage.vue"),
       },
     ],
   },

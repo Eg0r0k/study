@@ -77,10 +77,16 @@
             <template v-else>
                 <div class="achievements-wrapper">
                     <div class="achievements-grid">
-                        <AchievementCard v-for="i in 10" :key="i" name="Real programmer" subtitle="Strong Middle"
-                            level="4/5" icon="/achievements/programmer.svg"
+                        <AchievementCard v-for="achivement in authStore.user?.unlocked_achievements"
+                            :key="achivement.achievement.id" :name="achivement.achievement.name"
+                            subtitle="Strong Middle" :level="achivement.level"
+                            :icon="`/achievements/${achivement.achievement.code}.png`"
                             description="Достигните высокого уровня мастерства в программировании, освоив продвинутые техники и паттерны разработки"
-                            date="2024-02-15" />
+                            :date="achivement.date_earned" />
+                        <AchievementCard class="grayscale-100" v-for="achivement in authStore.user?.locked_achievements"
+                            :key="achivement.id" :name="achivement.name" subtitle="Strong Middle"
+                            :icon="`/achievements/${achivement.code}.png`"
+                            description="Достигните высокого уровня мастерства в программировании, освоив продвинутые техники и паттерны разработки" />
                     </div>
                 </div>
             </template>
@@ -96,8 +102,10 @@ import { Card, CardDescription, CardHeader, CardTitle, CardContent } from '@/com
 import AchievementCard from '@/components/achievements/AchievementCard.vue';
 import { Button } from '@/components/ui/button';
 import AreaChart from '@/components/charts/AreaChart.vue';
+import { useAuthStore } from '@/stores/authStore';
 
 const route = useRoute();
+const authStore = useAuthStore()
 
 const showDatabaseContent = computed(() => route.path === '/database');
 const showAchievementsContent = computed(() => route.path === '/achievements');

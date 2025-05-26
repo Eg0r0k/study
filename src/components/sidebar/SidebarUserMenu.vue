@@ -3,14 +3,15 @@
         <DropdownMenuTrigger as-child>
             <Button variant="ghost" class="w-full h-auto p-2">
                 <Avatar class="  size-[52px] ">
-                    <AvatarImage src="/" :alt="user.username" />
+                    <AvatarImage src="/" :alt="authStore.user?.username" />
                     <AvatarFallback class="dark:bg-muted font-bold bg-primary !text-white">
-                        {{ userInitials }}
+                        {{ authStore.userInitials }}
                     </AvatarFallback>
                 </Avatar>
                 <div class="grid flex-1 text-left text-sm leading-tight">
-                    <span class="truncate font-semibold text-lg">{{ user.username }}</span>
-                    <span class="truncate text-xs font-medium  text-muted-foreground/70 ">{{ user.username }}</span>
+                    <span class="truncate font-semibold text-lg">{{ authStore.user?.username }}</span>
+                    <span class="truncate text-xs font-medium  text-muted-foreground/70 ">{{ authStore.user?.role
+                        }}</span>
                 </div>
             </Button>
         </DropdownMenuTrigger>
@@ -20,34 +21,22 @@
                 <div class="flex flex-col gap-1 px-1 py-1 text-left text-sm">
                     <div class="flex gap-2   items-center ">
                         <Avatar class="h-8 w-8">
-                            <AvatarImage src="/" :alt="user.username" />
+                            <AvatarImage src="/" :alt="authStore.user?.username" />
                             <AvatarFallback class="dark:bg-muted font-bold bg-primary !text-white">
-                                {{ userInitials }}
+                                {{ authStore.userInitials }}
                             </AvatarFallback>
                         </Avatar>
                         <div class="grid flex-1 text-left text-sm leading-tight">
-                            <span class="truncate font-semibold">{{ user.username }}</span>
-                            <span class="truncate text-xs">{{ user.username }}</span>
+                            <span class="truncate font-semibold">{{ authStore.user?.username }}</span>
+                            <span class="truncate text-xs">{{ authStore.user?.username }}</span>
                         </div>
                     </div>
 
                 </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                    <RouterLink to="/profile">
-                        <UserIcon />
-                        {{ $t('common.profile') }}
-                    </RouterLink>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    <Sparkles />
-                    Pro версия
-                </DropdownMenuItem>
 
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+
 
             <DropdownMenuGroup>
                 <DropdownMenuItem @click="authStore.logout">
@@ -62,37 +51,12 @@
 <script lang="ts" setup>
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Progress } from '@/components/ui/progress';
 import {
-    ChevronsUpDown,
-    Sparkles,
     LogOut,
-    UserIcon
 } from 'lucide-vue-next';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuGroup, DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { computed } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
-import type { User } from '@/types/auth';
 
-interface Props {
-    user: User
-}
-const props = defineProps<Props>();
-const authStore = useAuthStore()
-
-const userInitials = computed(() => {
-    if (!props.user.username.trim()) {
-        return 'U';
-    }
-    const names = props.user.username.trim().split(/\s+/);
-    let initials = '';
-    if (names.length >= 2) {
-        initials = names[0][0] + names[names.length - 1][0];
-    } else {
-        initials = names[0].slice(0, 2);
-    }
-    return initials.toUpperCase().padEnd(2, '').slice(0, 2);
-});
-
+const authStore = useAuthStore();
 
 </script>

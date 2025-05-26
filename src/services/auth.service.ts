@@ -1,4 +1,9 @@
-import type { LoginCredentials, RegisterCredentials, User } from "@/types/auth";
+import type {
+  LoginCredentials,
+  RegisterCredentials,
+  AuthResponse,
+  AchievementsResponse,
+} from "@/types/auth";
 import apiClient from "@/lib/axios";
 
 interface ApiResponse<T> {
@@ -17,12 +22,10 @@ export class AuthService {
     throw new Error(message);
   }
 
-  static async login(
-    credentials: LoginCredentials
-  ): Promise<ApiResponse<void>> {
+  static async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await apiClient.post<ApiResponse<void>>(
-        "/login",
+      const response = await apiClient.post<AuthResponse>(
+        "/api/auth/login",
         credentials
       );
       return response.data;
@@ -31,47 +34,39 @@ export class AuthService {
     }
   }
 
-  static async register(
-    credentials: RegisterCredentials
-  ): Promise<ApiResponse<void>> {
+  static async register(credentials: RegisterCredentials): Promise<void> {
     try {
-      const { repeatPassword, ...registrationData } = credentials;
-      const response = await apiClient.post<ApiResponse<void>>(
-        "/register",
-        registrationData
-      );
-      return response.data;
+      console.log(credentials);
+      await apiClient.post("/api/auth/registration", credentials);
     } catch (error: any) {
       throw new Error(error.response?.data?.message || "Ошибка регистрации");
     }
   }
 
   static async logout(): Promise<void> {
-    await apiClient.post("/logout");
+    await apiClient.post("/api/auth/logout");
   }
 
-  static async refresh(): Promise<ApiResponse<void>> {
+  static async checkAuth(): Promise<AuthResponse> {
     try {
-      const response = await apiClient.post<ApiResponse<void>>("/refresh");
+      const response = await apiClient.get<AuthResponse>("/api/auth");
       return response.data;
     } catch (error: any) {
       throw new Error(
-        error.response?.data?.message || "Ошибка обновления токена"
+        error.response?.data?.message || "Ошибка проверки авторизации"
       );
     }
   }
-  static async getProfile(): Promise<ApiResponse<User>> {
+
+  static async getAchievements(): Promise<AchievementsResponse> {
     try {
-      const response = await apiClient.get<User>("/profile");
-      return {
-        data: response.data,
-        message: "Success",
-        status: response.status,
-      };
+      const response = await apiClient.get<AchievementsResponse>(
+        "/api/achievement"
+      );
+      return response.data;
     } catch (error: any) {
-      console.log("Profile API Response:", error.response);
       throw new Error(
-        error.response?.data?.message || "Ошибка получения профиля"
+        error.response?.data?.message || "Ошибка получения достижений"
       );
     }
   }
