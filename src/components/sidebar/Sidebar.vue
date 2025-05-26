@@ -62,8 +62,8 @@ const USER_LINKS: Links[] = [
     { label: 'Каталог курсов', url: '/projects', icon: BookIcon },
     { label: 'Мероприятия', url: '/events', icon: Calendar },
     { label: 'Чаты', url: '/chat', icon: MessageCircle },
-    { label: 'sidebar.settings', url: '/settings', icon: SettingsIcon },
-    { label: 'Карьера', url: '/settings', icon: NotepadText },
+    //{ label: 'sidebar.settings', url: '/settings', icon: SettingsIcon },
+    { label: 'Карьера', url: '/career', icon: NotepadText },
 ];
 const ADMIN_LINKS: Links[] = [
     { label: 'Панель управления', url: '/users', icon: PanelsTopLeft },
