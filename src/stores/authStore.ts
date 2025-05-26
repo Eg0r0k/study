@@ -74,7 +74,10 @@ export const useAuthStore = defineStore("auth", () => {
       loading.value = true;
       error.value = null;
       await AuthService.register(credentials);
-       
+      await AuthService.login({
+        username: credentials.username,
+        password: credentials.password,
+      });
       await setUserData();
       router.push("/");
     } catch (e) {
