@@ -15,16 +15,11 @@ interface UnlockedAchievement {
 }
 
 export interface User {
-  user_id: string;
-  level: number;
-  experience: number;
+  user_id: number;
   username: string;
-  role: string;
-  permissions: string[];
-  unlocked_achievements: UnlockedAchievement[];
-  locked_achievements: Achievement[];
+  email: string;
+  created_at: string;
 }
-
 export interface LoginCredentials {
   username: string;
   password: string;

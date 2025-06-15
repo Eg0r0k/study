@@ -1,68 +1,113 @@
 <template>
     <section class="px-4">
-        <div class="flex flex-col gap-6">
-            <!-- Фильтры -->
-            <div class="flex gap-2 overflow-x-auto pb-2">
-                <Button v-for="category in categories" 
-                    :key="category.id"
-                    variant="outline"
-                    :class="{ 'bg-accent': selectedCategory === category.id }"
-                    @click="selectedCategory = category.id">
-                    {{ category.name }}
+        <div class="w-full max-w-[400px] mx-auto flex flex-col items-center space-y-4">
+            <h1 class="text-2xl font-bold">Смена пароля</h1>
+            <p class="text-sm text-muted-foreground">Обновите свой пароль для безопасности.</p>
+
+            <form @submit="onSubmit" class="w-full space-y-4">
+                <!-- Текущий пароль -->
+                <FormField v-slot="{ componentField }" name="oldPassword">
+                    <FormItem>
+                        <FormLabel>Текущий пароль</FormLabel>
+                        <FormControl>
+                            <Input autocomplete="current-password" class="h-10 !bg-card" v-bind="componentField"
+                                type="password" placeholder="Введите текущий пароль" />
+                        </FormControl>
+                        <FormMessage class="text-xs text-destructive" />
+                    </FormItem>
+                </FormField>
+
+                <!-- Новый пароль -->
+                <FormField v-slot="{ componentField }" name="newPassword">
+                    <FormItem>
+                        <FormLabel>Новый пароль</FormLabel>
+                        <FormControl>
+                            <Input autocomplete="new-password" class="h-10 !bg-card" v-bind="componentField"
+                                type="password" placeholder="Введите новый пароль" />
+                        </FormControl>
+                        <FormMessage class="text-xs text-destructive" />
+                    </FormItem>
+                </FormField>
+
+                <!-- Подтверждение нового пароля -->
+                <FormField v-slot="{ componentField }" name="confirmPassword">
+                    <FormItem>
+                        <FormLabel>Подтвердите новый пароль</FormLabel>
+                        <FormControl>
+                            <Input autocomplete="new-password" class="h-10 !bg-card" v-bind="componentField"
+                                type="password" placeholder="Подтвердите новый пароль" />
+                        </FormControl>
+                        <FormMessage class="text-xs text-destructive" />
+                    </FormItem>
+                </FormField>
+
+                <!-- Кнопка отправки -->
+                <Button size="lg" type="submit" class="w-full" :disabled="isLoading">
+                    {{ isLoading ? "Загрузка..." : "Изменить пароль" }}
                 </Button>
-            </div>
-
-            <div v-if="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <CourseCard v-for="course in filteredCourses" 
-                    :key="course.id" 
-                    :course="course"
-                    @open-details="openCourseDetails" />
-            </div>
-            <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <CourseCardSkeleton v-for="i in 6" :key="i" />
-            </div>
+            </form>
         </div>
-
-        <CourseDialog v-model:open="showCourseDialog" :course="selectedCourse" />
     </section>
 </template>
-
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { Button } from '@/components/ui/button';
-import CourseCard from '@/components/courses/CourseCard.vue';   
-import CourseCardSkeleton from '@/components/courses/CourseCardSkeleton.vue';
-import CourseDialog from '@/components/courses/CourseDialog.vue';
-import type { Course } from '@/types/course';
-import { fetchCourses } from '@/api/courses';
+import { useI18n } from 'vue-i18n';
+import { toast } from 'vue-sonner';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import * as z from 'zod';
+import { Icon } from "@iconify/vue";
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { FormControl, FormField, FormItem, FormMessage, FormLabel } from '@/components/ui/form'
+import LottieAnimation from '@/components/animations/LottieAnimation.vue'
+import { ref } from 'vue'
+import { EyeIcon, EyeOffIcon } from 'lucide-vue-next'
+import { useAuthStore } from "@/stores/authStore";
+import { REGEX_PATTERNS } from '@/utils/validation'
 
-const categories = [
-    { id: 'all', name: 'Все' },
-    { id: 'ai', name: 'Искусственный интеллект' },
-    { id: 'tech', name: 'Современные технологии' },
-    { id: 'dev', name: 'Разработка' },
-    { id: 'business', name: 'Бизнес' },
-];
 
-const selectedCategory = ref('all');
-const courses = ref<Course[]>([]);
-const isLoading = ref(true);
-const showCourseDialog = ref(false);
-const selectedCourse = ref<Course | null>(null);
+const formSchema = toTypedSchema(
+    z
+        .object({
+            oldPassword: z.string().min(1, "Текущий пароль обязателен."),
+            newPassword: z.string()
+                .min(6, "Новый пароль должен содержать минимум 6 символов.")
+                .max(50, "Новый пароль не должен превышать 50 символов."),
+            confirmPassword: z.string().min(1, "Подтвердите новый пароль."),
+        })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+            message: "Пароли не совпадают.",
+            path: ['confirmPassword'],
+        })
+);
 
-const filteredCourses = computed(() => {
-    if (selectedCategory.value === 'all') return courses.value;
-    return courses.value.filter(course => course.category === selectedCategory.value);
+// Инициализация формы
+const { handleSubmit, isSubmitting } = useForm({
+    validationSchema: formSchema,
+    initialValues: {
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+    },
 });
 
-const openCourseDetails = (course: Course) => {
-    selectedCourse.value = course;
-    showCourseDialog.value = true;
-};
+const isLoading = ref(false);
+const authStore = useAuthStore();
 
-onMounted(async () => {
+const onSubmit = handleSubmit(async (values) => {
+    if (isLoading.value) return;
+
     try {
-        courses.value = await fetchCourses();
+        isLoading.value = true;
+        await authStore.changePassword(values.oldPassword, values.newPassword);
+
+        toast.success("Пароль успешно изменён", {
+            description: "Ваш пароль был успешно обновлён.",
+        });
+    } catch (error) {
+        toast.error("Ошибка при смене пароля", {
+            description: error instanceof Error ? error.message : "Произошла ошибка при смене пароля.",
+        });
     } finally {
         isLoading.value = false;
     }

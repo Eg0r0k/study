@@ -2,15 +2,8 @@ import type {
   LoginCredentials,
   RegisterCredentials,
   AuthResponse,
-  AchievementsResponse,
 } from "@/types/auth";
 import apiClient from "@/lib/axios";
-
-interface ApiResponse<T> {
-  data: T;
-  message: string;
-  status: number;
-}
 
 export class AuthService {
   private static handleError(error: any, defaultMessage: string): never {
@@ -22,10 +15,11 @@ export class AuthService {
     throw new Error(message);
   }
 
+  // Авторизация пользователя
   static async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
       const response = await apiClient.post<AuthResponse>(
-        "/api/auth/login",
+        "/api/login",
         credentials
       );
       return response.data;
@@ -34,40 +28,44 @@ export class AuthService {
     }
   }
 
+  // Регистрация пользователя
   static async register(credentials: RegisterCredentials): Promise<void> {
     try {
-      console.log(credentials);
-      await apiClient.post("/api/auth/registration", credentials);
+      await apiClient.post("/api/register", credentials);
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || "Ошибка регистрации");
+      throw new Error(error.response?.data?.error || "Ошибка регистрации");
     }
   }
 
   static async logout(): Promise<void> {
-    await apiClient.post("/api/auth/logout");
+    try {
+      await apiClient.post("/api/logout");
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || "Ошибка выхода");
+    }
   }
 
-  static async checkAuth(): Promise<AuthResponse> {
+  // Получение данных пользователя
+  static async getUserData(): Promise<any> {
     try {
-      const response = await apiClient.get<AuthResponse>("/api/auth");
+      const response = await apiClient.get("/api/user");
       return response.data;
     } catch (error: any) {
       throw new Error(
-        error.response?.data?.message || "Ошибка проверки авторизации"
+        error.response?.data?.error || "Ошибка получения данных пользователя"
       );
     }
   }
 
-  static async getAchievements(): Promise<AchievementsResponse> {
+  // Смена пароля
+  static async changePassword(
+    oldPassword: string,
+    newPassword: string
+  ): Promise<void> {
     try {
-      const response = await apiClient.get<AchievementsResponse>(
-        "/api/achievement"
-      );
-      return response.data;
+      await apiClient.put("/api/change-password", { oldPassword, newPassword });
     } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || "Ошибка получения достижений"
-      );
+      throw new Error(error.response?.data?.error || "Ошибка смены пароля");
     }
   }
 }

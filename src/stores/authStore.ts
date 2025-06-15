@@ -13,24 +13,29 @@ export const useAuthStore = defineStore("auth", () => {
 
   const isAuthenticated = computed(() => !!user.value);
 
+  // Загрузка данных пользователя
   const setUserData = async () => {
-    const [authData, achievementsData] = await Promise.all([
-      AuthService.checkAuth(),
-      AuthService.getAchievements(),
-    ]);
+    try {
+      const userData = await AuthService.getUserData();
+      console.log("User data from server:", userData); // Логируем данные
 
-    user.value = {
-      user_id: achievementsData.user.user_id,
-      level: achievementsData.user.level,
-      experience: achievementsData.user.experience,
-      username: authData.username,
-      role: authData.role,
-      permissions: authData.permissions,
-      unlocked_achievements: achievementsData.unlocked_achievements,
-      locked_achievements: achievementsData.locked_achievements,
-    };
+      if (!userData || !userData.id) {
+        throw new Error("Invalid user data received from server");
+      }
+
+      user.value = {
+        user_id: userData.id,
+        username: userData.username,
+        email: userData.email,
+        created_at: userData.created_at,
+      };
+    } catch (e) {
+      console.error("Ошибка загрузки данных пользователя:", e);
+      user.value = null;
+    }
   };
 
+  // Инициализация аутентификации
   async function initializeAuth() {
     if (authChecked.value) return;
 
@@ -38,15 +43,15 @@ export const useAuthStore = defineStore("auth", () => {
       loading.value = true;
       await setUserData();
     } catch (e) {
-      console.error("Init auth error:", e);
+      console.error("Ошибка инициализации аутентификации:", e);
       user.value = null;
-      error.value = null;
     } finally {
       loading.value = false;
       authChecked.value = true;
     }
   }
 
+  // Авторизация пользователя
   async function login(credentials: LoginCredentials) {
     try {
       loading.value = true;
@@ -65,10 +70,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  function setRedirectPath(path: string) {
-    redirectPath.value = path;
-  }
-
+  // Регистрация пользователя
   async function register(credentials: RegisterCredentials) {
     try {
       loading.value = true;
@@ -89,11 +91,12 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  // Выход из системы
   async function logout() {
     try {
       await AuthService.logout();
     } catch (e) {
-      error.value = "Logout failed";
+      error.value = "Ошибка выхода";
     } finally {
       user.value = null;
       authChecked.value = true;
@@ -101,6 +104,22 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  // Смена пароля
+  async function changePassword(oldPassword: string, newPassword: string) {
+    try {
+      loading.value = true;
+      error.value = null;
+      await AuthService.changePassword(oldPassword, newPassword);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Неизвестная ошибка";
+      error.value = message;
+      throw new Error(message);
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  // Генерация инициалов пользователя
   const userInitials = computed(() => {
     if (!user.value?.username) {
       return "U";
@@ -129,8 +148,9 @@ export const useAuthStore = defineStore("auth", () => {
     login,
     logout,
     initializeAuth,
-    setRedirectPath,
+    setRedirectPath: (path: string) => (redirectPath.value = path),
     redirectPath: computed(() => redirectPath.value),
     userInitials,
+    changePassword,
   };
 });
